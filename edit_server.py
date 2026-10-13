@@ -45,9 +45,10 @@ COPY = os.path.join(HERE, "copy")
 EDITOR = os.path.join(HERE, "editor")
 OUT = str(build_redesign.OUT)
 PUBLISHED = os.path.join(HERE, ".published")
-PORT = 8788
+PORT = int(os.environ.get("ALCUIN_PORT", "8788"))
 LOCK = threading.Lock()
-NODE_BIN = "/Users/joseph/.local/node/bin"
+# Folder holding node/npx for the wrangler deploy; override with ALCUIN_NODE_BIN.
+NODE_BIN = os.environ.get("ALCUIN_NODE_BIN", os.path.expanduser("~/.local/node/bin"))
 PROJECT_NAME = "alcuinproject"
 SITE_URL = "https://alcuinproject.com"
 
@@ -533,7 +534,11 @@ def main():
     rebuild()
     if not os.path.isdir(PUBLISHED):
         print("NOTE: no .published/ snapshot yet; Publish will ask for one")
-    server = http.server.ThreadingHTTPServer(("127.0.0.1", PORT), Handler)
+    try:
+        server = http.server.ThreadingHTTPServer(("127.0.0.1", PORT), Handler)
+    except OSError:
+        sys.exit("Port %d is already in use. Is the editor already running? "
+                 "Close it, or set ALCUIN_PORT to another port." % PORT)
     url = "http://localhost:%d" % PORT
     print("Alcuin editing server ready:", url)
     if "--no-open" not in sys.argv:

@@ -31,13 +31,22 @@ OUT = HERE / "redesign"
 STORY_CANDIDATES = sorted(HERE.glob("our_story_draft_v*.md"),
                           key=lambda p: int(re.search(r"v(\d+)", p.name).group(1)))
 STORY_FILE = STORY_CANDIDATES[-1]
-HEADSHOT = HERE.parent / "content-drop" / "headshot_ai_render_2026-08-25.png"
+# Image sources live in ../content-drop in the working project. The public
+# repo carries the same files in images/, so either location works.
+def _first_existing(*paths):
+    return next((p for p in paths if p.exists()), paths[0])
+
+HEADSHOT = _first_existing(
+    HERE.parent / "content-drop" / "headshot_ai_render_2026-08-25.png",
+    HERE / "images" / "headshot_ai_render_2026-08-25.png")
 
 # Room photograph for the homepage band. Joseph is still iterating on the
 # source image (2026-09-18) -- drop a replacement at this path and
 # rebuild. Widths are generated from it; nothing is upscaled, so a source
 # narrower than a listed width is simply skipped.
-CLASSROOM = HERE.parent / "content-drop" / "classroom_2026-09-18.jpg"
+CLASSROOM = _first_existing(
+    HERE.parent / "content-drop" / "classroom_2026-09-18.jpg",
+    HERE / "images" / "classroom_2026-09-18.jpg")
 CLASSROOM_WIDTHS = (900, 1400, 2000, 2800)
 
 # The three adopted AI Norms designs (../norms-poster/README.md, ruling
@@ -2526,11 +2535,17 @@ def main():
     # 180px About portrait at 2x.
     if HEADSHOT.exists():
         for size in (240, 360):
-            subprocess.run(
-                ["sips", "-s", "format", "jpeg", "-s", "formatOptions", "80",
-                 "-Z", str(size), str(HEADSHOT),
-                 "--out", str(OUT / "assets" / f"headshot-{size}.jpg")],
-                check=True, capture_output=True)
+            dest = OUT / "assets" / f"headshot-{size}.jpg"
+            try:
+                subprocess.run(
+                    ["sips", "-s", "format", "jpeg", "-s", "formatOptions", "80",
+                     "-Z", str(size), str(HEADSHOT), "--out", str(dest)],
+                    check=True, capture_output=True)
+            except (OSError, subprocess.CalledProcessError):
+                # sips is macOS-only; Pillow does the same resize elsewhere.
+                im = Image.open(HEADSHOT).convert("RGB")
+                im.thumbnail((size, size), Image.LANCZOS)
+                im.save(dest, "JPEG", quality=80)
     rooms = build_classroom()
     if rooms:
         print(f"  classroom: {', '.join(str(w) for w, _h, _n in rooms)}")
@@ -2554,7 +2569,10 @@ def main():
     # The Gmail signature (email_signature.html) and every email already
     # sent load the mark from /mark.png at the site root. It lived in the
     # old live/ placeholder deploy and 404'd once redesign/ replaced it.
-    shutil.copy(HERE / "live" / "mark.png", OUT / "mark.png")
+    if (HERE / "live" / "mark.png").exists():
+        shutil.copy(HERE / "live" / "mark.png", OUT / "mark.png")
+    else:
+        print("  ! missing live/mark.png; site icon not copied")
     pages = {
         "index.html": build_home(),
         "training.html": build_training(),

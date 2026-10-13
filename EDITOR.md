@@ -6,7 +6,7 @@ alcuinproject.com.
 ## Start it
 Double-click `edit.command` (this folder), or in a terminal:
 
-    cd ".../projects/ai-pd-business/site" && python3 edit_server.py
+    python3 edit_server.py
 
 It opens http://localhost:8788. Devotional runs on 8787, so both can run.
 
