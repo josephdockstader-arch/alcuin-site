@@ -1,0 +1,7 @@
+redesign/
+.published/
+.backups/
+.build/
+.wrangler/
+__pycache__/
+.DS_Store

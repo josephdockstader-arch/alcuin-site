@@ -1,0 +1,108 @@
+/* Editor chrome for the local Alcuin edit server. Palette: teal, cream, ember. */
+
+#editmode-btn {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 1000;
+  padding: 10px 16px;
+  border: 1px solid #17313b;
+  border-radius: 999px;
+  background: #f6f1e5;
+  color: #17313b;
+  font: 600 14px/1 system-ui, -apple-system, sans-serif;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.14);
+}
+#editmode-btn:hover { background: #ede6d6; }
+body.editing #editmode-btn { background: #17313b; color: #f6f1e5; }
+
+#publish-btn {
+  position: fixed;
+  right: 138px;
+  bottom: 18px;
+  z-index: 1000;
+  padding: 10px 16px;
+  border: 1px solid #e8501e;
+  border-radius: 999px;
+  background: #e8501e;
+  color: #fff;
+  font: 600 14px/1 system-ui, -apple-system, sans-serif;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.14);
+}
+#publish-btn:hover { background: #c9420f; }
+#publish-btn:disabled { opacity: 0.65; cursor: default; }
+
+body.editing .editable-block {
+  outline: 1.5px dashed rgba(232, 80, 30, 0.55);
+  outline-offset: 4px;
+  cursor: text;
+  border-radius: 2px;
+}
+body.editing .editable-block:hover {
+  outline-color: #e8501e;
+  background: rgba(232, 80, 30, 0.08);
+}
+.editable-block.editing-now {
+  outline: 2px solid #e8501e !important;
+  background: rgba(255, 255, 255, 0.55) !important;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+}
+.on-dark .editable-block.editing-now,
+.inquiry .editable-block.editing-now,
+footer .editable-block.editing-now {
+  background: rgba(0, 0, 0, 0.35) !important;
+}
+
+#edit-toolbar[hidden] { display: none; }
+#edit-toolbar {
+  position: fixed;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1001;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border: 1px solid #d8d0bf;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.15);
+  font-family: system-ui, -apple-system, sans-serif;
+}
+#edit-toolbar button {
+  padding: 7px 16px;
+  border-radius: 7px;
+  border: 1px solid #d8d0bf;
+  background: #f6f1e5;
+  color: #17313b;
+  font: 600 13px/1 system-ui, -apple-system, sans-serif;
+  cursor: pointer;
+}
+#edit-save {
+  background: #17313b !important;
+  border-color: #17313b !important;
+  color: #f6f1e5 !important;
+}
+#edit-save:disabled { opacity: 0.6; cursor: default; }
+#edit-hint { font-size: 11.5px; color: #8a8a8a; }
+
+#edit-toast {
+  position: fixed;
+  top: 74px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1002;
+  max-width: 520px;
+  padding: 10px 18px;
+  border-radius: 8px;
+  background: #17313b;
+  color: #f6f1e5;
+  font: 500 13.5px/1.45 system-ui, -apple-system, sans-serif;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.2);
+  white-space: pre-line;
+}
+#edit-toast[hidden] { display: none; }
+#edit-toast.error { background: #7a2e2a; color: #fff; }
